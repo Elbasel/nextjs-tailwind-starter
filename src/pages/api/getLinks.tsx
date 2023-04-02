@@ -3,7 +3,7 @@ import { CheerioCrawler, purgeDefaultStorages } from "crawlee";
 import { deleteLinks, getLinks, superbaseClient } from "@lib/superbase";
 import { isUrlValid } from "@lib/url";
 
-export default async function handle(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -22,7 +22,7 @@ export default async function handle(
     const crawler = new CheerioCrawler({
       async requestHandler({ request, enqueueLinks, log }) {
         log.info(request.url);
-        await enqueueLinks();
+        await enqueueLinks({ strategy: "same-origin" });
         allUrls.push(request.url);
       },
     });
@@ -34,8 +34,10 @@ export default async function handle(
 
     // if url found in database, return it
     if (storedLinks.length > 0) {
+      // storedLinks.forEach((link) => allUrls.push(link.url));
+
       // unified response for both cases (found in database or not)
-      if (!debug) return res.status(200).json({ links: storedLinks });
+      if (!debug) return res.status(200).json({ storedLinks });
 
       return res.status(200).json({
         debugMessage: "link found in database",
@@ -55,7 +57,7 @@ export default async function handle(
       .insert([{ url, allUrls }]);
 
     // unified response for both cases (found in database or not)
-    if (!debug) return res.status(200).json({ links: allUrls });
+    if (!debug) return res.status(200).json({ allUrls });
 
     return res.status(200).json({
       debugMessage: "link not found in database",

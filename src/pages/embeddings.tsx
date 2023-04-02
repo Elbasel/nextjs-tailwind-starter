@@ -10,7 +10,7 @@ const Embeddings: NextPage = () => {
     e.preventDefault();
     setLoading(true);
 
-    const response = await fetch("/api/generate-embeddings", {
+    const response = await fetch("/api/getEmbeddings", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ urls }),

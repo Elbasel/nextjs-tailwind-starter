@@ -9,7 +9,7 @@ type getDocumentsArgs = {
   onError?: (error: any) => void;
 };
 
-export const getDocuments = async ({
+export const getLinks = async ({
   url,
   debug,
   refreshDatabase,
@@ -32,7 +32,7 @@ export const getDocuments = async ({
       maxRequestsPerCrawl,
     });
 
-    const res = await fetch("/api/getDocuments", {
+    const res = await fetch("/api/getLinks", {
       method: "POST",
       headers,
       body,

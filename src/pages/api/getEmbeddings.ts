@@ -17,7 +17,7 @@ export default async function handle(
 
   if (method === "POST") {
     const { urls } = body;
-    const documents = await getDocuments(urls);
+    const documents = await getChunks(urls);
 
     for (const { url, body } of documents) {
       const input = body.replace(/\n/g, " ");
@@ -27,7 +27,7 @@ export default async function handle(
 
       const embeddingResponse = await openAi.createEmbedding({
         model: "text-embedding-ada-002",
-        input
+        input,
       });
 
       console.log("\nembeddingResponse: \n", embeddingResponse);
@@ -38,7 +38,7 @@ export default async function handle(
       await superbaseClient.from("documents").insert({
         content: input,
         embedding,
-        url
+        url,
       });
     }
 
@@ -50,7 +50,7 @@ export default async function handle(
     .json({ success: false, message: "Method not allowed" });
 }
 
-async function getDocuments(urls: string[]) {
+async function getChunks(urls: string[]) {
   const documents = [];
   for (const url of urls) {
     const response = await fetch(url);
